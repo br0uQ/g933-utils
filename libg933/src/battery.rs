@@ -52,6 +52,7 @@ lazy_static! {
 
         mapset!(maps, 0x0A5B, "0A5B");
         mapset!(maps, 0x0A66, "0A66");
+        mapset!(maps, 0x0A87, "0A5B");
 
 
         maps
