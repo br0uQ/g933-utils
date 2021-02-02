@@ -189,6 +189,42 @@ fn run() -> Result<(), Error> {
                 device.set_equalizer(false, config)?;
                 device.set_equalizer(true, config)?;
             }
+            "lights" => {
+                let light = match values[0] {
+                    "logo" => libg933::lights::Light::Logo,
+                    "primary" => libg933::lights::Light::Side,
+                    _ => bail!("First value specifies the Light: 'logo'/'primary'"),
+                };
+
+                let effect = match values[1] {
+                    "off" => libg933::lights::Effect::Off,
+                    "static" => libg933::lights::Effect::Static {
+                        red: values[2].parse::<u8>()?,
+                        green: values[3].parse::<u8>()?,
+                        blue: values[4].parse::<u8>()?,
+                    },
+                    "breathing" => libg933::lights::Effect::Breathing {
+                        red: values[2].parse::<u8>()?,
+                        green: values[3].parse::<u8>()?,
+                        blue: values[4].parse::<u8>()?,
+                        rate: values[5].parse::<u16>()?,
+                        brightness: values[6].parse::<u8>()?,
+                    },
+                    "colorcycle" => libg933::lights::Effect::ColorCycle {
+                        rate: values[2].parse::<u16>()?,
+                        brightness: values[3].parse::<u8>()?,
+                    },
+                    _ => bail!("Second value specifies the Effect ('off', 'static', 'breathing', 'colorcycle')"),
+                };
+
+                let mut config = libg933::lights::Config {
+                    light: light,
+                    effect: effect,
+                    profile_type: libg933::lights::ProfileType::Temporary,
+                };
+
+                device.set_lights(&config)?;
+            }
             "poweroff_timeout" => {
                 let timeout = match values[0] {
                     "never" => None,
